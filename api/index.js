@@ -1,13 +1,11 @@
 const expres = require('express');
+const routes = require('./routes');
 
 const app = expres();
+const port = 3000;
 
 app.use(expres.json())
 
-app.use('/', (req, res) =>{
-    res.send({mensagem: 'Safe!'})
-})
-
-const port = 3000;
+routes(app);
 
 app.listen(port, () => console.log(`Servidor ouvindo na porta ${port}`));
