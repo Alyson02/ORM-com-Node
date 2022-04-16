@@ -1,9 +1,5 @@
-const PessoaController = require("../controllers/PessoaController")
-
+const pessoaRoute = require('./pessoaRoute');
 
 module.exports = app => {
-    app.get('/', async (req, res) =>{
-        const pessoas = await PessoaController.GetAll(req, res)
-        res.send({mensagem: pessoas}) 
-    })
+    app.use(pessoaRoute)
 }
