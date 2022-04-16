@@ -1,0 +1,33 @@
+{
+  "name": "orm-com-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./api/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alyson02/ORM-com-Node.git"
+  },
+  "keywords": [
+    "Node"
+  ],
+  "author": "Alyson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alyson02/ORM-com-Node/issues"
+  },
+  "homepage": "https://github.com/Alyson02/ORM-com-Node#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "express": "^4.17.3",
+    "mysql2": "^2.3.3",
+    "path": "^0.12.7",
+    "sequelize": "^6.19.0",
+    "sequelize-cli": "^6.4.1"
+  }
+}
