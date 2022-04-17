@@ -9,6 +9,18 @@ router.post('/pessoas', PessoaController.Create);
 
 router.put('/pessoas/:idPessoa', PessoaController.Update);
 
-router.delete('/pessoas/:idPessoa', PessoaController.Delete)
+router.delete('/pessoas/:idPessoa', PessoaController.Delete);
+
+// store matriculas
+
+router.get('/pessoas/:idEstudante/matriculas', PessoaController.GetAllMatriculas);
+
+router.get('/pessoas/:idEstudante/matriculas/:idMatricula', PessoaController.GetMatricula);
+
+router.post('/pessoas/:idEstudante/matriculas', PessoaController.CreateMatricula);
+
+router.put('/pessoas/:idEstudante/matriculas/:idMatricula', PessoaController.UpdateMatricula);
+
+router.delete('/pessoas/:idEstudante/matriculas/:idMatricula', PessoaController.DeleteMatricula);
 
 module.exports = router;

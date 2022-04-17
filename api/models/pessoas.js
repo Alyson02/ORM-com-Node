@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       Pessoas.hasMany(models.Turmas, {
         foreignKey: 'docente_id'
       });
-    }
+    } 
   }
   Pessoas.init({
     nome: DataTypes.STRING,
