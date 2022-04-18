@@ -11,6 +11,8 @@ router.put('/pessoas/:idPessoa', PessoaController.Update);
 
 router.delete('/pessoas/:idPessoa', PessoaController.Delete);
 
+router.post('/pessoas/:id/recuperar', PessoaController.RestorePessoa)
+
 // store matriculas
 
 router.get('/pessoas/:idEstudante/matriculas', PessoaController.GetAllMatriculas);
