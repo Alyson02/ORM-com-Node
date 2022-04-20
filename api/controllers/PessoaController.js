@@ -1,10 +1,20 @@
 const database = require('../models');
+const Sequelize = require('sequelize');
 
 class PessoaController{
 
-    static async GetAll(req, res){
+    static async GetAllAtivos(req, res){
         try {
             const pessoas = await database.Pessoas.findAll();
+            return res.status(200).json(pessoas);
+        } catch (error) {
+            return res.status(500).json(error.message);    
+        }
+    }
+
+    static async GetAll(req, res){
+        try {
+            const pessoas = await database.Pessoas.scope('todos').findAll();
             return res.status(200).json(pessoas);
         } catch (error) {
             return res.status(500).json(error.message);    
@@ -65,6 +75,41 @@ class PessoaController{
         }
     }
 
+    static async CancelaPessoa(req, res){
+        const {idPessoa} = req.params;
+
+        try {
+            database.sequelize.transaction(async transaction => {
+                await database.Pessoas.update(
+                {
+                    ativo: false
+                }, 
+                {
+                    where: { id: idPessoa }
+                },
+                {
+                    transaction: transaction
+                }
+                );
+    
+                await database.Matriculas.update(
+                {
+                    status: 'Cancelado'
+                }, 
+                {   
+                    where: { estudante_id: idPessoa}
+                },
+                {
+                    transaction: transaction
+                })
+                
+                return res.status(204).end();    
+            })
+        } catch (error) {
+            return res.status(404).json({ mensagem: error.message });
+        }
+    }
+
     static async Delete(req, res){
         const {idPessoa} = req.params
 
@@ -93,6 +138,9 @@ class PessoaController{
         }
     }
 
+    
+    //Store Matriculas
+
     static async GetAllMatriculas(req, res){
         const { idEstudante } = req.params;
         try {
@@ -106,9 +154,7 @@ class PessoaController{
             return res.status(500).json(error.message);    
         }
     }
-
-    //Store Matriculas
-
+    
     static async GetMatricula(req, res){
         const {idEstudante, idMatricula} = req.params;
 
@@ -123,6 +169,70 @@ class PessoaController{
 
             if(matricula == null)
                 throw new Error("Pessoa não encontrada")
+
+            return res.status(200).json(matricula);
+        } catch (error) {
+            return res.status(404).json({ mensagem: error.message  });
+        }
+    }
+
+    static async GetMatriculaByTurma(req, res){
+        const {turmaId} = req.params;
+
+        try {
+            const matriculas = await database.Matriculas.findAndCountAll({
+                where: {
+                    turma_id: Number(turmaId),
+                    status: 'confirmado'
+                },
+                limit: 20,
+                order: [['estudante_id'], 'DESC']
+            })
+
+            if(matriculas == null)
+                throw new Error("Pessoa não encontrada")
+
+            return res.status(200).json(matriculas);
+        } catch (error) {
+            return res.status(404).json({ mensagem: error.message  });
+        }
+    }
+
+    static async GetTurmasLotadas(req, res){
+        const lotacaoTurma = 2;
+
+        try {
+            const turmasLotadas = await database.Matriculas.findAndCountAll({
+                where: {
+                    status: 'confirmado'
+                },
+                attributes: ['turma_id'],
+                group: ['turma_id'],
+                having: Sequelize.literal(`count(turma_id) >= ${lotacaoTurma}`)
+            })
+
+            if(turmasLotadas == null)
+                throw new Error("Pessoa não encontrada")
+
+            return res.status(200).json(turmasLotadas);
+        } catch (error) {
+            return res.status(404).json({ mensagem: error.message  });
+        }
+    }
+
+    static async GetAllMatriculasAtivadas(req, res){
+        const {idEstudante} = req.params;
+
+        console.log("O id da pessoa é " + idEstudante);
+
+        try {
+            const pessoa = await database.Pessoas.findOne({
+                where: {
+                    id: idEstudante
+                },
+            });
+
+            const matricula = await pessoa.getAulasMatriculadas();
 
             return res.status(200).json(matricula);
         } catch (error) {
@@ -220,7 +330,7 @@ class PessoaController{
         } catch (error) {
           return res.status(500).json(error.message)
         }
-      }
+    }
 
 }
 
